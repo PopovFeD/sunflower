@@ -1,0 +1,151 @@
+% шрифт для чисел в разных режимах разный
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{extsizes} % выставление любого размера шрифта
+\usepackage[a4paper,top=10mm,bottom=20mm,left=20mm,right=10mm]{geometry} % формат листа
+\linespread{1.3} % расстояние между строками
+\usepackage{amssymb,amsfonts,amsmath,amsthm} % математические дополнения от АМС
+\usepackage{indentfirst} % отделять первую строку раздела абзацным отступом тоже
+\newcommand{\commentblock}[1]{} %для многострочных комментариев, вызывать как функцию
+\usepackage{float} % для возможности размещения фигур не там, где решит программа, а где она написана в коде
+\usepackage{tabto} % табуляция с помощью \tab
+\usepackage{longtable} % для таблиц, требующих переноса на следующую страницу
+\usepackage{multirow} % для создания таблиц с объединением ячеек
+\usepackage{graphicx} % для указания директории с изображениями
+\usepackage{pdfpages} % простая вставка pdf
+\usepackage{wrapfig} % картинка справа или слева от текста
+
+% Настройки языков, шрифтов и переносов слов
+\usepackage[no-math]{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage[indentfirst=true,forceheadingpunctuation=false]{russian}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\defaultfontfeatures{Ligatures=TeX}
+
+% Настройка шрифтов (вы можете выбрать другие)
+%\setmainfont{Times New Roman}
+%\newfontfamily\cyrillicfont{Times New Roman}
+
+\IfFontExistsTF{Times New Roman}
+{\setmainfont{Times New Roman}
+	\newfontfamily\cyrillicfont{Times New Roman}[Script=Cyrillic]}
+{\setmainfont[Script=Cyrillic]{FreeSerif}}
+
+\IfFontExistsTF{Courier New}
+{\setmonofont{Courier New}
+	\newfontfamily\cyrillicfonttt{Courier New}[Script=Cyrillic]
+}
+{\setmonofont[Script=Cyrillic]{FreeMono}}
+
+\IfFontExistsTF{Arial}
+{\setsansfont{Arial}
+	\newfontfamily\cyrillicfontsf{Arial}[Script=Cyrillic]
+}
+{\setsansfont[Script=Cyrillic]{FreeSans}}
+
+% Настройка длинного тире
+\defaultfontfeatures[\rmfamily,\sffamily]{}
+\renewcommand{\textendash}{--}
+
+% для размещения множества картинок на одном уровне
+\usepackage{subcaption}
+\renewcommand\thesubfigure{\asbuk{subfigure}} %ab -> аб
+
+% ссылки
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true, % Все ссылки и гиперссылки цветные
+	linktocpage=true, % Ссылка - только номер страницы, а не весь заголовок (так выглядит аккуратнее)
+	linkcolor=blue,
+	urlcolor=blue,
+}
+
+\usepackage{tikz} % векторная графика tikz
+
+\usepackage{comment}
+\usepackage{textcomp}   % Просто чтобы не ругался gensymb
+\usepackage{gensymb}    % Символы в духе Градусов Цельсия
+\usepackage[version=3]{mhchem}  % Хиимия, химия
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bbN}{\mathbb N}
+\newcommand{\dif}{\mathrm{d}}
+
+\setromanfont{Charis SIL}
+
+\DeclareSymbolFont{letters}{\encodingdefault}{\rmdefault}{m}{it}
+
+\usepackage{unicode-math}
+
+%\setmathfont{XITS Math}
+
+\usepackage{svg}
+
+% точки в section
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+
+\usepackage[labelsep=period]{caption}
+%\input{variables}
+
+%\graphicspath{ {pics/} }
+
+%\usepackage{svg} % Подключаем пакет svg
+
+%\usepackage{subcaption} % Подключаем пакет subcaption для работы с подфигурами
+%\usepackage{pdfpages}
+
+%\usepackage{epstopdf}
+% Настройка epstopdf для использования LaTeX
+%\epstopdfsetup{update,prepend,prefersuffix=true,verbose=true}
+
+%\usepackage{pst-platon}
+
+\usepackage{listings}
+%\newfontfamily\ttfamily{DejaVu Sans Mono}
+
+\lstset{
+    basicstyle=\ttfamily,  % Устанавливаем шрифт \ttfamily, который назначен \setmonofont
+    %language=C++,          % Язык кода (можно заменить на нужный)
+    breaklines=true,       % Перенос строк, если они слишком длинные
+    tabsize=4,              % Размер табуляции
+}
+
+
+% Определение стиля для теорем
+\theoremstyle{plain} % Стиль для теорем, лемм и т.д.
+\newtheorem{theorem}{Теорема}[section]
+\newtheorem{lemma}[theorem]{Лемма}
+\newtheorem{corollary}[theorem]{Следствие}
+
+% Стиль для определений
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Определение}
+
+% Стиль для замечаний
+\theoremstyle{remark}
+\newtheorem*{remark}{Замечание}
+
+%\usepackage{tcolorbox} % Для создания прямоугольников
+
+\usepackage{stackengine}  % подписи под основным текстом
+\usepackage{tabto}  % продолжить с определённой позиции по горизонтали, к примеру, с середины страницы
+
+% Таблицы с задаваемой шириной столбцов через P{1.5cm}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\usepackage{multicol} % спасение при больших перечислениях
+
+\usepackage{tabularx}
+
+\usepackage{booktabs}
+
+% package to open file containing variables
+\usepackage{datatool, filecontents}
+\DTLsetseparator{;}% Set the separator between the columns.
+
+% Loads mydata.dat with column headers 'thekey' and 'thevalue'
+\newcommand{\var}[1]{\DTLfetch{mydata}{thekey}{#1}{thevalue}}

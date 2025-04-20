@@ -1,0 +1,14 @@
+# Основные зависимости
+numpy
+opencv-python
+pyserial
+scipy
+ultralytics
+
+# Библиотеки, которые обычно требуются для работы ultralytics
+torch
+torchvision
+tqdm
+matplotlib
+pandas
+seaborn
