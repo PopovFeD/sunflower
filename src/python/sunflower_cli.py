@@ -11,31 +11,59 @@ from ultralytics import YOLO
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="YOLO-based person tracker with serial output by default.")
+    """
+    Parse command line arguments for the YOLO-based person tracker.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="YOLO-based person tracker with serial output by default."
+    )
+
+    # Add arguments to the parser
     parser.add_argument("--source", type=int, default=0, help="Camera ID (default: 0)")
-    parser.add_argument("--model", type=Path, default=Path("yolo11n.pt"), help="Path to YOLO model")
-    parser.add_argument("--conf", type=float, default=0.5, help="Detection confidence threshold")
+    parser.add_argument(
+        "--model", type=Path, default=Path("yolo11n.pt"), help="Path to YOLO model"
+    )
+    parser.add_argument(
+        "--conf", type=float, default=0.5, help="Detection confidence threshold"
+    )
     parser.add_argument("--iou", type=float, default=0.5, help="NMS IOU threshold")
-    parser.add_argument("--max-dist", type=float, default=50.0, help="Maximum centroid distance for tracking")
-    parser.add_argument("--reset-interval", type=float, default=2.0, help="Time (s) to reset tracking")
-    parser.add_argument("--serial", action="store_true", default=True,
-                        help="Enable serial output (default: enabled)")
-    parser.add_argument("--port", type=str, default="COM4",
-                        help="Serial port (default: COM4)")
+    parser.add_argument(
+        "--max-dist",
+        type=float,
+        default=50.0,
+        help="Maximum centroid distance for tracking",
+    )
+    parser.add_argument(
+        "--reset-interval", type=float, default=2.0, help="Time (s) to reset tracking"
+    )
+    parser.add_argument(
+        "--no-serial",
+        action="store_true",
+        default=False,
+        help="Disable serial output (default: enabled)",
+    )
+    parser.add_argument(
+        "--port", type=str, default="COM4", help="Serial port (default: COM4)"
+    )
+
+    # Parse and return the arguments
     return parser.parse_args()
 
 
 class CentroidTracker:
     def __init__(self, max_distance: float = 50.0):
         self.next_id = 0
-        self.objects: dict[int, tuple[np.ndarray, np.ndarray]] = {}  # id -> (centroid, bbox)
+        self.objects: dict[int, tuple[np.ndarray, np.ndarray]] = (
+            {}
+        )  # id -> (centroid, bbox)
         self.max_distance = max_distance
 
-    def update(self, detections: list[tuple[np.ndarray, np.ndarray]]) -> dict[int, tuple[np.ndarray, np.ndarray]]:
-        """
-        Assigns detections to existing objects or creates new IDs.
-        detections: list of (centroid, bbox) where centroid = [x, y], bbox = [x1,y1,x2,y2]
-        """
+    def update(
+        self, detections: list[tuple[np.ndarray, np.ndarray]]
+    ) -> dict[int, tuple[np.ndarray, np.ndarray]]:
         # If no detections, keep existing objects
         if not detections:
             return self.objects
@@ -78,6 +106,12 @@ class CentroidTracker:
 
 
 def main():
+    """
+    Main entry point for the YOLO-based person tracker.
+
+    Handles command line arguments, initializes the camera, model, and tracker,
+    and runs the tracking loop.
+    """
     args = parse_args()
     cap = cv2.VideoCapture(args.source)
     if not cap.isOpened():
@@ -88,7 +122,7 @@ def main():
 
     # Initialize serial by default
     ser = None
-    if args.serial:
+    if not args.no_serial:
         ser = serial.Serial(args.port, 9600, timeout=1)
         time.sleep(2)
 
@@ -129,8 +163,15 @@ def main():
             centroid, bbox = objects[tracked_id]
             x1, y1, x2, y2 = bbox
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(frame, f"ID {tracked_id}", (x1, y1 - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            cv2.putText(
+                frame,
+                f"ID {tracked_id}",
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0, 255, 0),
+                2,
+            )
             last_seen = time.time()
 
             # Normalize and output
@@ -144,7 +185,7 @@ def main():
                     ser.write(b"2")
                 else:
                     ser.write(b"1")
-        
+
         # Reset if lost
         elif tracked_id is not None and time.time() - last_seen > 15:
             tracked_id = None
@@ -152,7 +193,7 @@ def main():
         # Display and handle exit keys
         cv2.imshow("Tracking", frame)
         key = cv2.waitKey(1)
-        if key in (ord('q'), ord('Q'), 27):
+        if key in (ord("q"), ord("Q"), 27):
             break
 
     cap.release()
